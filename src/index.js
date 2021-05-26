@@ -56,8 +56,8 @@ export function app(state, actions, view, container) {
     return typeof node === "function"
       ? resolveNode(node(globalState, wiredActions))
       : node != null
-        ? node
-        : ""
+      ? node
+      : ""
   }
 
   function render() {
@@ -65,9 +65,13 @@ export function app(state, actions, view, container) {
 
     var node = resolveNode(view)
 
+    console.log("===start", container, node)
+
     if (container && !skipRender) {
       rootElement = patch(container, rootElement, oldNode, (oldNode = node))
     }
+
+    console.log("---end", rootElement)
 
     isRecycling = false
 
@@ -216,11 +220,10 @@ export function app(state, actions, view, container) {
       typeof node === "string" || typeof node === "number"
         ? document.createTextNode(node)
         : (isSvg = isSvg || node.nodeName === "svg")
-          ? document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              node.nodeName
-            )
-          : node.nodeName === '' ? new DocumentFragment() : document.createElement(node.nodeName)
+        ? document.createElementNS("http://www.w3.org/2000/svg", node.nodeName)
+        : node.nodeName !== ""
+        ? document.createElement(node.nodeName)
+        : new DocumentFragment()
 
     var attributes = node.attributes
     if (attributes) {
@@ -301,7 +304,8 @@ export function app(state, actions, view, container) {
   }
 
   function patch(parent, element, oldNode, node, isSvg) {
-    if (node === oldNode || !element) {
+    console.log(parent, element, oldNode, node, isSvg)
+    if (node === oldNode) {
     } else if (oldNode == null || oldNode.nodeName !== node.nodeName) {
       var newElement = createElement(node, isSvg)
       parent.insertBefore(newElement, element)
@@ -314,6 +318,7 @@ export function app(state, actions, view, container) {
     } else if (oldNode.nodeName == null) {
       element.nodeValue = node
     } else {
+      console.log(element)
       updateElement(
         element,
         oldNode.attributes,
