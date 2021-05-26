@@ -176,7 +176,7 @@ export function app(state, actions, view, container) {
       if (name[0] === "o" && name[1] === "n") {
         name = name.slice(2)
 
-        if (element.events) {
+        if (element && element.events) {
           if (!oldValue) oldValue = element.events[name]
         } else {
           element.events = {}
