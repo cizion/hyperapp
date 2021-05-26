@@ -220,7 +220,7 @@ export function app(state, actions, view, container) {
               "http://www.w3.org/2000/svg",
               node.nodeName
             )
-          : document.createElement(node.nodeName)
+          : node.nodeName === '' ? new DocumentFragment() : document.createElement(node.nodeName)
 
     var attributes = node.attributes
     if (attributes) {
