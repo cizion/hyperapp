@@ -176,7 +176,7 @@ export function app(state, actions, view, container) {
       if (name[0] === "o" && name[1] === "n") {
         name = name.slice(2)
 
-        if (element && element.events) {
+        if (element.events) {
           if (!oldValue) oldValue = element.events[name]
         } else {
           element.events = {}
@@ -301,7 +301,7 @@ export function app(state, actions, view, container) {
   }
 
   function patch(parent, element, oldNode, node, isSvg) {
-    if (node === oldNode) {
+    if (node === oldNode || !element) {
     } else if (oldNode == null || oldNode.nodeName !== node.nodeName) {
       var newElement = createElement(node, isSvg)
       parent.insertBefore(newElement, element)
