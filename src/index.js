@@ -65,13 +65,15 @@ export function app(state, actions, view, container) {
 
     var node = resolveNode(view)
 
-    console.log("===start", container, node)
+    console.groupCollapsed("===start")
+    console.log("container, node", container, node)
 
     if (container && !skipRender) {
       rootElement = patch(container, rootElement, oldNode, (oldNode = node))
     }
 
-    console.log("---end", rootElement)
+    console.log("root", rootElement)
+    console.groupEnd()
 
     isRecycling = false
 
@@ -221,9 +223,9 @@ export function app(state, actions, view, container) {
         ? document.createTextNode(node)
         : (isSvg = isSvg || node.nodeName === "svg")
         ? document.createElementNS("http://www.w3.org/2000/svg", node.nodeName)
-        : node.nodeName !== ""
-        ? document.createElement(node.nodeName)
-        : new DocumentFragment()
+        : !node.nodeName
+        ? document.createDocumentFragment()
+        : document.createElement(node.nodeName)
 
     var attributes = node.attributes
     if (attributes) {
@@ -304,7 +306,15 @@ export function app(state, actions, view, container) {
   }
 
   function patch(parent, element, oldNode, node, isSvg) {
-    console.log(parent, element, oldNode, node, isSvg)
+    console.group("patch")
+    console.groupCollapsed("patch params")
+    console.log("parent", parent)
+    console.log("element", element)
+    console.log("oldNode", oldNode)
+    console.log("node", node)
+    console.log("isSvg", isSvg)
+    console.groupEnd()
+
     if (node === oldNode) {
     } else if (oldNode == null || oldNode.nodeName !== node.nodeName) {
       var newElement = createElement(node, isSvg)
@@ -318,7 +328,14 @@ export function app(state, actions, view, container) {
     } else if (oldNode.nodeName == null) {
       element.nodeValue = node
     } else {
-      console.log(element)
+      !node.nodeName && (element = parent)
+
+      console.groupCollapsed("patch else Data")
+      console.log("element", element)
+      console.log("oldNode", oldNode)
+      console.log("node", node)
+      console.groupEnd()
+
       updateElement(
         element,
         oldNode.attributes,
@@ -340,6 +357,14 @@ export function app(state, actions, view, container) {
           oldKeyed[oldKey] = [oldElements[i], oldChildren[i]]
         }
       }
+
+      console.groupCollapsed("patch updateData")
+      console.log("oldKeyed", oldKeyed)
+      console.log("newKeyed", newKeyed)
+      console.log("oldElements", oldElements)
+      console.log("oldChildren", oldChildren)
+      console.log("children", children)
+      console.groupEnd()
 
       var i = 0
       var k = 0
@@ -403,6 +428,7 @@ export function app(state, actions, view, container) {
         }
       }
     }
+    console.groupEnd()
     return element
   }
 }
