@@ -65,15 +65,9 @@ export function app(state, actions, view, container) {
 
     var node = resolveNode(view)
 
-    // console.groupCollapsed("===start")
-    // console.log("container, node", container, node)
-
     if (container && !skipRender) {
       rootElement = patch(container, rootElement, oldNode, (oldNode = node))
     }
-
-    // console.log("root", rootElement)
-    // console.groupEnd()
 
     isRecycling = false
 
@@ -164,6 +158,8 @@ export function app(state, actions, view, container) {
 
   function updateAttribute(element, name, value, oldValue, isSvg) {
     if (name === "key") {
+    } else if (name === "ref") {
+      value.current = element
     } else if (name === "style") {
       if (typeof value === "string") {
         element.style.cssText = value
@@ -306,15 +302,6 @@ export function app(state, actions, view, container) {
   }
 
   function patch(parent, element, oldNode, node, isSvg) {
-    // console.group("patch")
-    // console.groupCollapsed("patch params")
-    // console.log("parent", parent)
-    // console.log("element", element)
-    // console.log("oldNode", oldNode)
-    // console.log("node", node)
-    // console.log("isSvg", isSvg)
-    // console.groupEnd()
-
     if (node === oldNode) {
     } else if (oldNode == null || oldNode.nodeName !== node.nodeName) {
       var newElement = createElement(node, isSvg)
@@ -329,12 +316,6 @@ export function app(state, actions, view, container) {
       element.nodeValue = node
     } else {
       !node.nodeName && (element = parent)
-
-      // console.groupCollapsed("patch else Data")
-      // console.log("element", element)
-      // console.log("oldNode", oldNode)
-      // console.log("node", node)
-      // console.groupEnd()
 
       updateElement(
         element,
@@ -361,14 +342,6 @@ export function app(state, actions, view, container) {
           oldKeyed[oldKey] = [oldElements[i], oldChildren[i]]
         }
       }
-
-      // console.groupCollapsed("patch updateData")
-      // console.log("oldKeyed", oldKeyed)
-      // console.log("newKeyed", newKeyed)
-      // console.log("oldElements", oldElements)
-      // console.log("oldChildren", oldChildren)
-      // console.log("children", children)
-      // console.groupEnd()
 
       var i = 0
       var k = 0
@@ -432,7 +405,6 @@ export function app(state, actions, view, container) {
         }
       }
     }
-    // console.groupEnd()
     return element
   }
 }
