@@ -315,9 +315,7 @@ export function app(state, actions, view, container) {
     } else if (oldNode.nodeName == null) {
       element.nodeValue = node
     } else {
-      if (!node.nodeName || !element) {
-        element = parent
-      }
+      !node.nodeName && (element = parent)
 
       updateElement(
         element,
@@ -332,11 +330,27 @@ export function app(state, actions, view, container) {
       var oldChildren = oldNode.children
       var children = node.children
 
+      var index = 0
       for (var i = 0; i < oldChildren.length; i++) {
-        if (!node.nodeName && container === element) {
-          oldElements[i] = element.children[i]
+        var childNode = oldChildren[i]
+        if (
+          childNode instanceof Object &&
+          !node.nodeName &&
+          container === element
+        ) {
+          if (!childNode.nodeName) {
+            oldElements[i] = createElement(childNode, isSvg)
+          } else {
+            oldElements[i] = element.children[index]
+            index++
+          }
         } else {
-          oldElements[i] = element.childNodes[i]
+          if (childNode instanceof Object && !childNode.nodeName) {
+            oldElements[i] = createElement(childNode, isSvg)
+          } else {
+            oldElements[i] = element.childNodes[index]
+            index++
+          }
         }
 
         var oldKey = getKey(oldChildren[i])
