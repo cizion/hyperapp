@@ -315,7 +315,9 @@ export function app(state, actions, view, container) {
     } else if (oldNode.nodeName == null) {
       element.nodeValue = node
     } else {
-      !node.nodeName && (element = parent)
+      if (!node.nodeName || !element) {
+        element = parent
+      }
 
       updateElement(
         element,
