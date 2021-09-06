@@ -56,8 +56,8 @@ export function app(state, actions, view, container) {
     return typeof node === "function"
       ? resolveNode(node(globalState, wiredActions))
       : node != null
-        ? node
-        : ""
+      ? node
+      : ""
   }
 
   function render() {
@@ -158,6 +158,8 @@ export function app(state, actions, view, container) {
 
   function updateAttribute(element, name, value, oldValue, isSvg) {
     if (name === "key") {
+    } else if (name === "ref") {
+      value.current = element
     } else if (name === "style") {
       if (typeof value === "string") {
         element.style.cssText = value
@@ -216,11 +218,10 @@ export function app(state, actions, view, container) {
       typeof node === "string" || typeof node === "number"
         ? document.createTextNode(node)
         : (isSvg = isSvg || node.nodeName === "svg")
-          ? document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              node.nodeName
-            )
-          : document.createElement(node.nodeName)
+        ? document.createElementNS("http://www.w3.org/2000/svg", node.nodeName)
+        : node.nodeName === "ROOT_ELEMENT"
+        ? document.createDocumentFragment()
+        : document.createElement(node.nodeName)
 
     var attributes = node.attributes
     if (attributes) {
@@ -314,6 +315,10 @@ export function app(state, actions, view, container) {
     } else if (oldNode.nodeName == null) {
       element.nodeValue = node
     } else {
+      if (node.nodeName === "ROOT_ELEMENT") {
+        element = parent
+      }
+
       updateElement(
         element,
         oldNode.attributes,
