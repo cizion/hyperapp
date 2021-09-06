@@ -219,7 +219,7 @@ export function app(state, actions, view, container) {
         ? document.createTextNode(node)
         : (isSvg = isSvg || node.nodeName === "svg")
         ? document.createElementNS("http://www.w3.org/2000/svg", node.nodeName)
-        : !node.nodeName
+        : node.nodeName === "ROOT_ELEMENT"
         ? document.createDocumentFragment()
         : document.createElement(node.nodeName)
 
@@ -315,7 +315,9 @@ export function app(state, actions, view, container) {
     } else if (oldNode.nodeName == null) {
       element.nodeValue = node
     } else {
-      !node.nodeName && (element = parent)
+      if (node.nodeName === "ROOT_ELEMENT") {
+        element = parent
+      }
 
       updateElement(
         element,
@@ -330,28 +332,8 @@ export function app(state, actions, view, container) {
       var oldChildren = oldNode.children
       var children = node.children
 
-      var index = 0
       for (var i = 0; i < oldChildren.length; i++) {
-        var childNode = oldChildren[i]
-        if (
-          childNode instanceof Object &&
-          !node.nodeName &&
-          container === element
-        ) {
-          if (!childNode.nodeName) {
-            oldElements[i] = createElement(childNode, isSvg)
-          } else {
-            oldElements[i] = element.children[index]
-            index++
-          }
-        } else {
-          if (childNode instanceof Object && !childNode.nodeName) {
-            oldElements[i] = createElement(childNode, isSvg)
-          } else {
-            oldElements[i] = element.childNodes[index]
-            index++
-          }
-        }
+        oldElements[i] = element.childNodes[i]
 
         var oldKey = getKey(oldChildren[i])
         if (oldKey != null) {
